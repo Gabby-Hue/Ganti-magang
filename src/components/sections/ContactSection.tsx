@@ -1,0 +1,6 @@
+import { MapPin, Github, Linkedin, Mail } from 'lucide-react';
+import { SectionWrapper } from '../ui/SectionWrapper';
+
+export function ContactSection(){
+ return <SectionWrapper id="contact"><div className="grid gap-6 lg:grid-cols-2"><form className="glass rounded-2xl p-6"><h2 className="section-title text-3xl">Contact Me</h2><div className="mt-4 space-y-3"><input placeholder="Name" className="w-full rounded-xl bg-white/10 p-3"/><input placeholder="Email" className="w-full rounded-xl bg-white/10 p-3"/><textarea rows={5} placeholder="Message" className="w-full rounded-xl bg-white/10 p-3"/></div><button className="mt-4 rounded-xl bg-tropical px-5 py-3 font-semibold text-midnight shadow-glow">Send Message</button></form><aside className="glass rounded-2xl p-6"><h3 className="text-2xl font-bold">Download CV & Reach Me</h3><a href="#" className="mt-4 inline-block rounded-xl border border-tropical px-4 py-2 text-tropical">Download CV</a><ul className="mt-5 space-y-3 text-white/85"><li className="flex items-center gap-2"><Mail size={16}/> hello@domain.com</li><li className="flex items-center gap-2"><Linkedin size={16}/> linkedin.com/in/yourname</li><li className="flex items-center gap-2"><Github size={16}/> github.com/yourname</li><li className="flex items-center gap-2"><MapPin size={16}/> Indonesia</li></ul></aside></div></SectionWrapper>
+}

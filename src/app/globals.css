@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+html, body { @apply bg-midnight text-glow overflow-x-hidden; }
+
+body {
+  background: radial-gradient(circle at 50% -20%, #1c3558 0%, #07111f 45%, #050c16 100%);
+}
+
+.glass {
+  @apply border border-white/20 bg-glass backdrop-blur-xl;
+}
+
+.section-title {
+  @apply text-3xl sm:text-4xl lg:text-5xl font-black text-white;
+}
+
+.starfield {
+  background-image: radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.8), transparent),
+    radial-gradient(1px 1px at 70% 20%, rgba(61,214,208,.7), transparent),
+    radial-gradient(2px 2px at 80% 60%, rgba(255,255,255,.6), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(248,250,252,.6), transparent);
+}
