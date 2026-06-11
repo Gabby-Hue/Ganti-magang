@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+html { @apply overflow-x-hidden; overflow-y: auto; }
+body { @apply bg-midnight text-glow; overflow: visible; }
+
+/* Hide double scrollbar — Lenis handles smooth scrolling */
+html::-webkit-scrollbar { width: 6px; }
+html::-webkit-scrollbar-track { background: transparent; }
+html::-webkit-scrollbar-thumb { background: rgba(94,189,138,0.3); border-radius: 3px; }
+html::-webkit-scrollbar-thumb:hover { background: rgba(94,189,138,0.5); }
+
+body {
+  background: radial-gradient(circle at 50% -20%, #0f4f34 0%, #071f14 45%, #051510 100%);
+}
+
+.glass {
+  @apply border border-white/10 bg-[#0a3d2a]/40 backdrop-blur-xl;
+}
+
+.section-title {
+  @apply text-3xl sm:text-4xl lg:text-5xl font-black text-white;
+}
+
