@@ -2,26 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-:root { color-scheme: dark; }
+:root {
+  color-scheme: dark;
+}
 
-html { @apply overflow-x-hidden; overflow-y: auto; }
-body { @apply bg-midnight text-glow; overflow: visible; }
-
-/* Hide double scrollbar — Lenis handles smooth scrolling */
-html::-webkit-scrollbar { width: 6px; }
-html::-webkit-scrollbar-track { background: transparent; }
-html::-webkit-scrollbar-thumb { background: rgba(94,189,138,0.3); border-radius: 3px; }
-html::-webkit-scrollbar-thumb:hover { background: rgba(94,189,138,0.5); }
+html {
+  @apply overflow-x-hidden scroll-smooth;
+  overflow-y: auto;
+}
 
 body {
-  background: radial-gradient(circle at 50% -20%, #0f4f34 0%, #071f14 45%, #051510 100%);
+  @apply min-h-screen bg-midnight text-glow antialiased;
+  overflow: visible;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(102, 210, 148, 0.24), transparent 32rem),
+    radial-gradient(circle at 82% 12%, rgba(177, 225, 115, 0.12), transparent 28rem),
+    linear-gradient(180deg, #0a3d28 0%, #061f14 48%, #04130e 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #061f14;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(159, 224, 114, 0.7), rgba(61, 168, 114, 0.72));
+  border: 2px solid #061f14;
+  border-radius: 999px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(199, 244, 141, 0.85), rgba(94, 189, 138, 0.9));
 }
 
 .glass {
-  @apply border border-white/10 bg-[#0a3d2a]/40 backdrop-blur-xl;
+  @apply border border-white/10 bg-[#0a3d2a]/45 backdrop-blur-xl;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 60px rgba(3, 36, 20, 0.2);
 }
 
 .section-title {
-  @apply text-3xl sm:text-4xl lg:text-5xl font-black text-white;
+  @apply text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl;
+  text-shadow: 0 12px 36px rgba(3, 44, 23, 0.45);
 }
-
