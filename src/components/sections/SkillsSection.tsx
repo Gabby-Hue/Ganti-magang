@@ -2,7 +2,6 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
 import { skills } from '@/data/portfolio';
 import { SectionWrapper } from '../ui/SectionWrapper';
 
@@ -11,24 +10,43 @@ export function SkillsSection() {
 
   useEffect(() => {
     const el = leafRef.current;
-    if (!el) return;
+    if (!el) {
+      return undefined;
+    }
 
-    const onScroll = () => {
+    let frame = 0;
+
+    const updateLeaf = () => {
+      frame = 0;
       const rect = el.getBoundingClientRect();
-      const viewH = window.innerHeight;
-      const progress = (viewH / 2 - rect.top) / viewH;
-      const clampedProgress = Math.max(0, Math.min(progress, 1.5));
+      const viewportHeight = window.innerHeight;
+      const progress = (viewportHeight * 0.55 - rect.top) / viewportHeight;
+      const clampedProgress = Math.max(0, Math.min(progress, 1.2));
 
-      // Slide right and fade as you scroll past
-      gsap.set(el, {
-        x: clampedProgress * 150,
-        opacity: Math.max(0, 1 - clampedProgress * 0.6),
-      });
+      el.style.transform = `translate3d(${clampedProgress * 72}px, ${clampedProgress * 18}px, 0) rotate(${clampedProgress * 1.6}deg)`;
+      el.style.opacity = `${Math.max(0.44, 0.88 - clampedProgress * 0.18)}`;
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    const requestUpdate = () => {
+      if (frame) {
+        return;
+      }
+
+      frame = window.requestAnimationFrame(updateLeaf);
+    };
+
+    requestUpdate();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
+
+    return () => {
+      if (frame) {
+        window.cancelAnimationFrame(frame);
+      }
+
+      window.removeEventListener('scroll', requestUpdate);
+      window.removeEventListener('resize', requestUpdate);
+    };
   }, []);
 
   return (
@@ -37,6 +55,7 @@ export function SkillsSection() {
         {/* Skill bars — left side */}
         <div className="lg:max-w-[55%]">
           <h2 className="section-title">Skills &amp; Tech Stack</h2>
+          <p className="mt-4 max-w-2xl text-white/72">A fresh stack garden: reliable foundations, modern frameworks, and smooth product-focused interactions.</p>
           <div className="mt-10 grid gap-5">
             {skills.map((s, i) => (
               <motion.div
@@ -45,7 +64,7 @@ export function SkillsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.04 }}
-                className="glass rounded-2xl p-5"
+                className="glass rounded-2xl p-5 shadow-[0_14px_45px_rgba(3,46,25,0.18)]"
               >
                 <div className="mb-2 flex justify-between">
                   <span>{s.name}</span>
@@ -62,14 +81,14 @@ export function SkillsSection() {
         {/* Leaf-right — large, overlapping from the right */}
         <div
           ref={leafRef}
-          className="hidden lg:block absolute top-0 right-[-25%] xl:right-[-30%] pointer-events-none select-none will-change-transform"
+          className="hidden lg:block absolute -top-24 right-[-42%] xl:right-[-48%] pointer-events-none select-none transform-gpu will-change-transform"
         >
           <Image
             src="/parallax/leaf-right.png"
             alt=""
-            width={1600}
-            height={1000}
-            className="w-[1000px] xl:w-[1200px] h-auto opacity-80"
+            width={2200}
+            height={1400}
+            className="h-auto w-[1500px] opacity-90 drop-shadow-[0_26px_70px_rgba(4,42,23,0.28)] xl:w-[1780px]"
           />
         </div>
       </div>
