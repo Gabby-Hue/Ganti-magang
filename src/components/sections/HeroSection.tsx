@@ -31,6 +31,7 @@ const LEAF_PARALLAX = {
 function useHeroParallax(disabled: boolean) {
   const rootRef = useRef<HTMLElement>(null);
   const leafRef = useRef<HTMLDivElement>(null);
+  const leafRightRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,6 +65,13 @@ function useHeroParallax(disabled: boolean) {
           `rotate(${scrollY * LEAF_PARALLAX.rotate}deg)`,
         ].join(' ');
       }
+
+      if (leafRightRef.current) {
+        leafRightRef.current.style.transform = [
+          `translate3d(${scrollY * -LEAF_PARALLAX.x}px, ${scrollY * LEAF_PARALLAX.y}px, 0)`,
+          `rotate(${scrollY * -LEAF_PARALLAX.rotate}deg)`,
+        ].join(' ');
+      }
     };
 
     const requestUpdate = () => {
@@ -88,12 +96,12 @@ function useHeroParallax(disabled: boolean) {
     };
   }, [disabled]);
 
-  return { rootRef, leafRef, textRef };
+  return { rootRef, leafRef, leafRightRef, textRef };
 }
 
 export function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
-  const { rootRef, leafRef, textRef } = useHeroParallax(Boolean(prefersReducedMotion));
+  const { rootRef, leafRef, leafRightRef, textRef } = useHeroParallax(Boolean(prefersReducedMotion));
 
   const layerMarkup = useMemo(
     () =>
@@ -143,22 +151,30 @@ export function HeroSection() {
         />
       </div>
 
+      <div
+        ref={leafRightRef}
+        className="pointer-events-none absolute -right-[10%] -top-[5%] z-[9] w-[800px] select-none transform-gpu will-change-transform sm:w-[1000px] lg:w-[1400px] xl:w-[1600px]"
+      >
+        <Image
+          src="/parallax/leaf-right.png"
+          alt="right foreground leaf"
+          width={1600}
+          height={1600}
+          className="h-auto w-full object-contain opacity-95 drop-shadow-[0_28px_60px_rgba(4,45,24,0.22)]"
+          priority
+        />
+      </div>
+
       <motion.div
         ref={textRef}
         initial={{ opacity: 0, y: 34 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: 'easeOut' }}
-        className="relative z-20 mx-5 max-w-4xl text-center text-[#06351f] will-change-transform"
+        className="relative z-20 mx-5 max-w-4xl text-center text-white will-change-transform"
       >
-        <p className="mx-auto mb-4 w-fit rounded-full border border-emerald-700/15 bg-white/55 px-4 py-2 text-xs font-bold uppercase tracking-[0.28em] text-emerald-900 shadow-[0_10px_30px_rgba(10,75,44,0.12)] backdrop-blur-md sm:text-sm">
-          Green Digital Garden
-        </p>
-        <h1 className="text-5xl font-black leading-none tracking-tight drop-shadow-[0_8px_28px_rgba(255,255,255,0.65)] sm:text-7xl lg:text-8xl">
+        <h1 className="text-5xl font-black leading-none tracking-tight drop-shadow-[0_8px_28px_rgba(0,0,0,0.4)] sm:text-7xl lg:text-8xl">
           Hello, I&apos;m Gerbil
         </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base font-medium leading-7 text-emerald-950/78 sm:text-lg">
-          I build calm, lively, and immersive web experiences with fresh motion, clean code, and an asri jungle mood.
-        </p>
       </motion.div>
 
       <motion.div
