@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/Navbar';
 import { Effects } from '@/components/Effects';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { AboutSection } from '@/components/sections/AboutSection';
 import { SkillsSection } from '@/components/sections/SkillsSection';
@@ -11,6 +12,7 @@ import { Footer } from '@/components/Footer';
 export default function HomePage(){
   return (
     <main>
+      <LoadingScreen/>
       <Effects/>
       <Navbar/>
       <HeroSection/>

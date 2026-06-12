@@ -74,17 +74,17 @@ export function Navbar() {
       <div className="flex items-center justify-end md:hidden">
         <button
           onClick={() => setOpen(!open)}
-          className="relative rounded-lg p-2.5 border-2 border-[#8b6914]/40"
+          className="relative rounded-xl p-3 border-2 border-[#8b6914]/40 transition-transform active:scale-95"
           style={{
             background: '#c49a3c',
-            boxShadow: '0 3px 0 #9a7520, 0 4px 10px rgba(0,0,0,0.2)',
+            boxShadow: '0 4px 0 #9a7520',
           }}
         >
           <div className="absolute top-[3px] left-1 right-1 h-[2px] rounded-full bg-[#e8c86a]/40" />
-          <div className="flex flex-col gap-[5px] w-5">
-            <span className={`h-[2px] bg-[#4a2e08] rounded-full transition-all duration-300 ${open ? 'rotate-45 translate-y-[7px]' : ''}`} />
-            <span className={`h-[2px] bg-[#4a2e08] rounded-full transition-all duration-300 ${open ? 'opacity-0 scale-0' : ''}`} />
-            <span className={`h-[2px] bg-[#4a2e08] rounded-full transition-all duration-300 ${open ? '-rotate-45 -translate-y-[7px]' : ''}`} />
+          <div className="flex flex-col gap-[5px] w-[22px]">
+            <span className={`h-[3px] bg-[#4a2e08] rounded-full transition-all duration-300 ${open ? 'rotate-45 translate-y-[8px]' : ''}`} />
+            <span className={`h-[3px] bg-[#4a2e08] rounded-full transition-all duration-300 ${open ? 'opacity-0 scale-0' : ''}`} />
+            <span className={`h-[3px] bg-[#4a2e08] rounded-full transition-all duration-300 ${open ? '-rotate-45 -translate-y-[8px]' : ''}`} />
           </div>
         </button>
       </div>
@@ -92,27 +92,43 @@ export function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.25 }}
-            className="mt-2 mx-auto max-w-sm rounded-xl p-2 md:hidden border-2 border-[#8b6914]/40"
-            style={{
-              background: '#c49a3c',
-              boxShadow: '0 4px 0 #9a7520, 0 6px 16px rgba(0,0,0,0.3)',
-            }}
+            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            transition={{ type: "spring", bounce: 0.3, duration: 0.4 }}
+            className="mt-3 mx-auto max-w-sm md:hidden flex flex-col gap-3"
           >
-            <div className="absolute top-[3px] left-2 right-2 h-[2px] rounded-full bg-[#e8c86a]/40" />
-            {links.map((l) => (
-              <a
+            {links.map((l, i) => (
+              <motion.a
                 key={l}
                 href={`#${l}`}
                 onClick={() => setOpen(false)}
-                className="group relative block py-2.5 px-4 text-center capitalize text-[#4a2e08] font-bold text-sm rounded-lg transition-colors hover:bg-[#4a2e08]/10"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="
+                  group relative block py-3.5 px-6 text-center capitalize text-[#4a2e08] font-bold text-[15px]
+                  rounded-xl border-2 border-[#8b6914]/40 active:scale-95 transition-transform
+                "
+                style={{
+                  background: '#c49a3c',
+                  boxShadow: '0 4px 0 #9a7520, 0 4px 12px rgba(0,0,0,0.15)',
+                }}
               >
-                {l}
-                <span className="absolute bottom-1.5 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-[#4a2e08] rounded-full transition-all duration-300 group-hover:w-1/2" />
-              </a>
+                <div className="absolute top-[3px] left-2 right-2 h-[2px] rounded-full bg-[#e8c86a]/40" />
+                {/* Wood grain pattern */}
+                <div className="absolute inset-0 rounded-xl opacity-10 pointer-events-none"
+                  style={{
+                    backgroundImage: `repeating-linear-gradient(180deg, transparent, transparent 10px, rgba(0,0,0,0.15) 10px, rgba(0,0,0,0.15) 12px)`
+                  }}
+                />
+                
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#7a5c15] shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]" />
+                  {l}
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#7a5c15] shadow-[inset_0_1px_1px_rgba(255,255,255,0.25)]" />
+                </span>
+              </motion.a>
             ))}
           </motion.div>
         )}

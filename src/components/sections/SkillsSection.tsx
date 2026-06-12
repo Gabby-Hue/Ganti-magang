@@ -1,77 +1,116 @@
 'use client';
-import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { skills } from '@/data/portfolio';
+import { useEffect, useRef, useState } from 'react';
+
+import { programmingSkills, designingSkills } from '@/data/portfolio';
 import { SectionWrapper } from '../ui/SectionWrapper';
 
-export function SkillsSection() {
-  const leafRef = useRef<HTMLDivElement>(null);
+/* ── Single animated skill bar ─────────────────────────────────────── */
+function SkillBar({ name, level, delay, icon }: { name: string; level: number; delay: number; icon: string }) {
+  const [animate, setAnimate] = useState(false);
+  const barRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const el = leafRef.current;
+    const el = barRef.current;
     if (!el) return;
 
-    const onScroll = () => {
-      const rect = el.getBoundingClientRect();
-      const viewH = window.innerHeight;
-      const progress = (viewH / 2 - rect.top) / viewH;
-      const clampedProgress = Math.max(0, Math.min(progress, 1.5));
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          // Delay the animation start for staggered effect
+          setTimeout(() => setAnimate(true), delay);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
 
-      // Slide right and fade as you scroll past
-      gsap.set(el, {
-        x: clampedProgress * 150,
-        opacity: Math.max(0, 1 - clampedProgress * 0.6),
-      });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [delay]);
 
   return (
-    <SectionWrapper id="skills">
-      <div className="relative">
-        {/* Skill bars — left side */}
-        <div className="lg:max-w-[55%]">
-          <h2 className="section-title">Skills &amp; Tech Stack</h2>
-          <div className="mt-10 grid gap-5">
-            {skills.map((s, i) => (
-              <motion.div
-                key={s.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04 }}
-                className="glass rounded-2xl p-5"
-              >
-                <div className="mb-2 flex justify-between">
-                  <span>{s.name}</span>
-                  <span>{s.level}%</span>
-                </div>
-                <div className="h-2 rounded-full bg-white/10">
-                  <div style={{ width: `${s.level}%` }} className="h-2 rounded-full bg-gradient-to-r from-[#1a7d5a] to-[#5ebd8a] shadow-glow" />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Leaf-right — large, overlapping from the right */}
-        <div
-          ref={leafRef}
-          className="hidden lg:block absolute top-0 right-[-25%] xl:right-[-30%] pointer-events-none select-none will-change-transform"
+    <div ref={barRef} className="mb-7 last:mb-0">
+      {/* Label row */}
+      <div className="mb-2.5 flex items-center justify-between">
+        <span className="flex items-center gap-2.5 text-sm font-semibold tracking-wider text-white/90 uppercase">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={icon} alt={name} width={20} height={20} className="h-5 w-5 object-contain" />
+          {name}
+        </span>
+        <span
+          className={`text-sm font-bold tabular-nums transition-all duration-1000 ${
+            animate ? 'text-[#5ebd8a]' : 'text-white/40'
+          }`}
         >
-          <Image
-            src="/parallax/leaf-right.png"
-            alt=""
-            width={1600}
-            height={1000}
-            className="w-[1000px] xl:w-[1200px] h-auto opacity-80"
-          />
-        </div>
+          {level}%
+        </span>
+      </div>
+
+      {/* Bar track */}
+      <div className="skill-bar-track">
+        <div
+          className={`skill-bar-fill ${animate ? 'animate' : ''}`}
+          style={{
+            width: animate ? `${level}%` : '0%',
+            background: 'linear-gradient(90deg, #1a7d5a, #5ebd8a)',
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ── Skill category column ─────────────────────────────────────────── */
+function SkillColumn({
+  title,
+  skills,
+  baseDelay,
+}: {
+  title: string;
+  skills: { name: string; level: number; icon: string }[];
+  baseDelay: number;
+}) {
+  return (
+    <div className="glass rounded-2xl p-6 sm:p-8">
+      <h3 className="mb-6 text-xl font-bold text-white tracking-wide">{title}</h3>
+      {skills.map((s, i) => (
+        <SkillBar
+          key={s.name}
+          name={s.name}
+          level={s.level}
+          icon={s.icon}
+          delay={baseDelay + i * 200}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── Main SkillsSection ────────────────────────────────────────────── */
+export function SkillsSection() {
+  return (
+    <SectionWrapper id="skills">
+      {/* Section header */}
+      <div className="mb-12 text-center">
+        <h2 className="section-title inline-block">My Skills</h2>
+        <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-gradient-to-r from-[#1a7d5a] to-[#5ebd8a]" />
+        <p className="mx-auto mt-4 max-w-xl text-white/65 leading-relaxed">
+          Beberapa skill dan teknologi yang saya kuasai dan gunakan untuk membuat website, mendesain antarmuka, serta mengembangkan berbagai proyek digital.
+        </p>
+      </div>
+
+      {/* Two-column layout */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <SkillColumn
+          title="Programming Skills"
+          skills={programmingSkills}
+          baseDelay={100}
+        />
+        <SkillColumn
+          title="Designing Skills"
+          skills={designingSkills}
+          baseDelay={300}
+        />
       </div>
     </SectionWrapper>
   );

@@ -25,3 +25,81 @@ body {
   @apply text-3xl sm:text-4xl lg:text-5xl font-black text-white;
 }
 
+/* ═══════════════════════════════════════════════════════
+   COVERFLOW SCROLL ANIMATIONS
+   Inline styles are applied by the useCoverflowScroll hook:
+   - opacity, transform (perspective + translateY + scale + rotateX)
+   - filter (blur) for depth-of-field effect
+   ═══════════════════════════════════════════════════════ */
+
+.coverflow-section {
+  /* Smooth 3D coverflow transforms driven by scroll */
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Children inherit the 3D space for depth */
+.coverflow-section > * {
+  transform-style: preserve-3d;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SKILL BAR ANIMATIONS
+   ═══════════════════════════════════════════════════════ */
+
+.skill-bar-track {
+  position: relative;
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  width: 0%;
+  transition: width 2.8s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.skill-bar-fill.animate {
+  /* width is set inline via style */
+}
+
+/* The circle indicator at the end of the bar */
+.skill-bar-fill::after {
+  content: '';
+  position: absolute;
+  right: -7px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: inherit;
+  box-shadow: 0 0 12px rgba(94, 189, 138, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: opacity 0.5s 1.8s;
+  opacity: 0;
+}
+
+.skill-bar-fill.animate::after {
+  opacity: 1;
+}
+
+/* Percentage counter animation */
+@keyframes countUp {
+  from { --percent: 0; }
+}
+
+/* Subtle glow pulse on the skill bar */
+@keyframes skillGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(94, 189, 138, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(94, 189, 138, 0.6); }
+}
+
+.skill-bar-fill.animate {
+  animation: skillGlow 2s ease-in-out 1.5s infinite;
+}

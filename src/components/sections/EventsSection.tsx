@@ -1,34 +1,13 @@
 'use client';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 import { events } from '@/data/portfolio';
 import { SectionWrapper } from '../ui/SectionWrapper';
 
 export function EventsSection() {
-  const leafRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = leafRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      const rect = el.getBoundingClientRect();
-      const viewH = window.innerHeight;
-      const progress = (viewH / 2 - rect.top) / viewH;
-      const clampedProgress = Math.max(0, Math.min(progress, 1.5));
-
-      gsap.set(el, {
-        x: -clampedProgress * 200,
-        opacity: Math.max(0, 1 - clampedProgress * 0.8),
-      });
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  const [selectedEvent, setSelectedEvent] = useState<typeof events[0] | null>(null);
 
   return (
     <SectionWrapper id="events">
@@ -41,25 +20,61 @@ export function EventsSection() {
               <p className="text-xs text-[#5ebd8a]">{e.year}</p>
               <h3 className="mt-1 font-bold">{e.title}</h3>
               <p className="mt-2 text-sm text-white/75">{e.description}</p>
-              <a href={e.certificate} className="mt-3 inline-block rounded-full border border-[#5ebd8a] px-4 py-2 text-sm text-[#5ebd8a] transition hover:bg-[#5ebd8a]/10">Preview Certificate</a>
+              {e.certificate !== '#' ? (
+                <a href={e.certificate} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block rounded-full border border-[#5ebd8a] px-4 py-2 text-sm text-[#5ebd8a] transition hover:bg-[#5ebd8a]/10">
+                  Preview Certificate
+                </a>
+              ) : (
+                <button onClick={() => setSelectedEvent(e)} className="mt-3 inline-block rounded-full border border-[#5ebd8a] px-4 py-2 text-sm text-[#5ebd8a] transition hover:bg-[#5ebd8a]/10">
+                  Preview Certificate
+                </button>
+              )}
             </div>
           </article>
         ))}
       </motion.div>
 
-      {/* Leaf-left decoration — sits right below the cards */}
-      <div
-        ref={leafRef}
-        className="pointer-events-none select-none will-change-transform -mt-4"
-      >
-        <Image
-          src="/parallax/leaf-left.png"
-          alt=""
-          width={1400}
-          height={900}
-          className="w-[600px] sm:w-[800px] lg:w-[1000px] xl:w-[1200px] h-auto"
-        />
-      </div>
+      <AnimatePresence>
+        {selectedEvent && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedEvent(null)}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-[#071f14] border border-white/10 shadow-2xl"
+            >
+              <button
+                onClick={() => setSelectedEvent(null)}
+                className="absolute right-4 top-4 z-10 rounded-full bg-black/50 p-2 text-white hover:bg-black/80 transition"
+              >
+                <X size={20} />
+              </button>
+              
+              <div className="relative min-h-[50vh] h-[70vh] w-full bg-black/50">
+                <Image
+                  src={selectedEvent.image}
+                  alt={selectedEvent.title}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+              
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-[#5ebd8a]">{selectedEvent.title}</h3>
+                <p className="mt-2 text-white/80 leading-relaxed">{selectedEvent.description}</p>
+                <p className="mt-2 text-sm font-medium text-[#5ebd8a]">{selectedEvent.year}</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </SectionWrapper>
   );
 }
